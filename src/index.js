@@ -5,17 +5,14 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 import {cardValue, cardSuit, cardType} from './card';
 
-const imageDir = '../public/assets/PNG/';
-
 function importAll(r) {
   let images = {};
-  r.keys().map((item, index) => { images[item.replace('./', '')] = r(item); });
+  r.keys().map((item, index) => {images[item.replace('./', '')] = r(item);});
   return images;
 }
 
 const images = importAll(require.context('../public/assets/PNG/', false, /\.(png|jpe?g|svg)$/));
-
-console.log(images);
+const facedown = "red_back.png";
 
 function createCardPack(){
 	let cardPack = []
@@ -25,38 +22,79 @@ function createCardPack(){
 	return cardPack;
 }
 
-function PlayerDisplay(props) {
-	const cards = props.playerCards;
+function DealerDisplay(props) {
+	const cards = props.dealerCards;
 	let cardUrls = [];
 	const getImages = () => {
-		console.log(cards);
 		cards.forEach(card => {
-			console.log(card);
 			let type = Math.floor(card / 4);
 			let suit = card % 4;
-
-			console.log(`type: ${type}`);
-			console.log(`suit: ${suit}`);
 			cardUrls.push(images[`${cardType[type]}${cardSuit[suit]}.png`]); 
 		})
 	}
 
 	const renderImage = (url) => {
 		return (
-			<div key={url}>
-				<img src={url}/>
+			<div className="container flip-container" key={url}>
+				<div className="flipper">
+					<div className="back">
+						<img className="cardImage" src={url}/>
+					</div>
+					<div className="front">
+						<img className="cardImage" src={images[facedown]}/>
+					</div>
+				</div>
+			</div>
+		)
+	}
+
+	const revealHand = () => {
+		const dealerCards = document.querySelectorAll('.flip-container');
+		console.log(dealerCards);
+		dealerCards.forEach(card => {
+			console.log(card);
+			card.classList.toggle("flip");
+		})
+	}
+
+	getImages();
+
+	if (props.gameEnds){
+		revealHand();
+	}
+
+	return (
+		<div className="dealer">
+			<div className="d-inline-flex flex-row justify-content mb-4">Dealer
+				{cardUrls.map(imageUrl => renderImage(imageUrl))}	
+			</div>
+		</div>
+	);
+}
+
+function PlayerDisplay(props) {
+	const cards = props.playerCards;
+	let cardUrls = [];
+	const getImages = () => {
+		cards.forEach(card => {
+			let type = Math.floor(card / 4);
+			let suit = card % 4;
+			cardUrls.push(images[`${cardType[type]}${cardSuit[suit]}.png`]); 
+		})
+	}
+
+	const renderImage = (url) => {
+		return (
+			<div className="container" key={url}>
+				<img className="cardImage" src={url}/>
 			</div>
 		)
 	}
 
 	getImages();
-	console.log(cardUrls);
 	return (
 		<div>Player
-			<div>
-				<p>{props.player}</p>	
-			</div>
-			<div className="player">
+			<div className="d-inline-flex flex-row mt-2 mb-4">
 				{cardUrls.map(imageUrl => renderImage(imageUrl))}	
 			</div>
 		</div>
@@ -73,7 +111,10 @@ function BlackJack(props){
 	const [gameEnds, setGameEnds] = useState(false);
 
 	const getWinner = () => {
-		if (player > 21) {
+		if (player > 21 && dealer > 21){
+			setWinner("tie");
+		}
+		else if (player > 21) {
 			setWinner("dealer wins!");
 		}
 		else if (dealer > 21) {
@@ -179,25 +220,24 @@ function BlackJack(props){
 	}, [gameEnds])
 
 	return (
-		<div className="container">
+		<div className="container m-5 p-4 rounded-top border text-center">
 			<h1>Blackjack</h1>
-			<p>Hello!</p>
 
-			<div>Dealer
-				<p>{dealer}</p>
-			</div>
+			<DealerDisplay dealer={dealer} dealerCards={dealerCards} gameEnds={gameEnds}>
+			</DealerDisplay>
 
 			<PlayerDisplay player={player} playerCards={playerCards}>
 			</PlayerDisplay>
 
-			<div>
-				<button disabled={gameEnds} onClick={hit}>Hit</button>
-				<button disabled={gameEnds} onClick={stand}>Stand</button>
+			<div className="btn-group mr-2">
+				<button className="btn btn-lg btn-outline-primary" disabled={gameEnds} onClick={hit}>Hit</button>
+				<button className="btn btn-lg btn-outline-primary" disabled={gameEnds} onClick={stand}>Stand</button>
+				<button className="btn btn-lg btn-outline-danger" onClick={reset}>Reset</button>
 			</div>
 
-			<button onClick={reset}>Reset</button>
-
-			<p className="winner">{winner}</p>
+			<div>
+				<p className="winner">{winner}</p>
+			</div>
 		</div>
 	)
 }

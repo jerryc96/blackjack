@@ -12,6 +12,66 @@ code {
     monospace;
 }
 
-.player {
+/*.player {
 	display: flex;
+}*/
+
+.cardImage {
+	width:100%;
+	max-width: 100px;
+	height: auto;
+}
+
+.flip-container {
+	width:100px;
+	perspective: 1000px;
+	transform-style: preserve-3d;
+	position: relative;
+}
+
+/* flip the pane when hovered */
+.flip-container:hover .back {
+	transform: rotateY(0deg);
+	}
+.flip-container:hover .front {
+    transform: rotateY(180deg);
+}
+
+/* flip the pane when triggered by js */
+.flip-container.flip .back {
+	transform: rotateY(0deg);
+	}
+.flip-container.flip .front {
+    transform: rotateY(180deg);
+}
+/*.flipper {
+	transition: 0.6s;
+	position: relative;
+	transform-style: preserve-3d;
+}*/
+
+/* hide back of pane during swap */
+.front, .back {
+	backface-visibility: hidden;
+	position: absolute;
+	top: 0;
+	left: 0;
+	transition: 0.6s;
+	transform-style: preserve-3d;
+}
+
+.front {
+    z-index: 2;
+    transform: rotateY(0deg);
+}
+
+.back {
+	transform: rotateY(180deg);
+}
+
+
+.dealer {
+	min-width: 100%;
+	min-height: 200px;
+	text-align: center;
 }
