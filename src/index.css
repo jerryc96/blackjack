@@ -30,12 +30,12 @@ code {
 }
 
 /* flip the pane when hovered */
-.flip-container:hover .back {
+/*.flip-container:hover .back {
 	transform: rotateY(0deg);
 	}
 .flip-container:hover .front {
     transform: rotateY(180deg);
-}
+}*/
 
 /* flip the pane when triggered by js */
 .flip-container.flip .back {

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-// import App from './App';
 import * as serviceWorker from './serviceWorker';
 import {cardValue, cardSuit, cardType} from './card';
 
@@ -35,7 +34,10 @@ function DealerDisplay(props) {
 
 	const renderImage = (url) => {
 		return (
-			<div className="container flip-container" key={url}>
+			<div className="container flip-container" key={url}
+			onClick={(event) => {
+				event.currentTarget.classList.toggle("flip");
+			}} >
 				<div className="flipper">
 					<div className="back">
 						<img className="cardImage" src={url}/>
@@ -50,9 +52,7 @@ function DealerDisplay(props) {
 
 	const revealHand = () => {
 		const dealerCards = document.querySelectorAll('.flip-container');
-		console.log(dealerCards);
 		dealerCards.forEach(card => {
-			console.log(card);
 			card.classList.toggle("flip");
 		})
 	}
